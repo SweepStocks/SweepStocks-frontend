@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import Image from 'next/image'
 
 function CreateBet({
   showCreateBet,
@@ -44,8 +45,7 @@ function CreateBet({
                   {/* GRID */}
 
                   <div className="grid grid-cols-2">
-                    <div className="justify items-center flex ">
-                    </div>
+                    <div className="justify items-center flex "></div>
                     <div className="flex">
                       <p className="text-sm text-slate-500 leading-relaxed">
                         Token price: $2.00
@@ -55,10 +55,14 @@ function CreateBet({
                   <div className="grid grid-cols-2 p-6">
                     <div className="justify items-center flex ">
                       <p className="text-lg">Token amount</p>
-                      <img
+
+                      <Image
+                        style={{ width: '30px', height: '30px' }}
                         src="/coin.png"
                         alt="coin"
-                        style={{ width: '30px', height: '30px' }}
+                        className="m-auto"
+                        width={400}
+                        height={400}
                       />
                     </div>
                     <div className="flex">
@@ -82,15 +86,18 @@ function CreateBet({
                     </div>
                   </div>
 
-                   {/* Token amount */}
+                  {/* Token amount */}
                   <div className="grid grid-cols-2 p-6">
                     <div className="justify items-center flex overflow-x-hidden overflow-y-auto">
                       <p className="text-lg">Pay with</p>
-                      <img
+
+                      <Image
+                        style={{ width: '25px', height: '25px' }}
                         src="/matic.png"
                         alt="coin"
-                        style={{ width: '25px', height: '25px' }}
                         className="m-auto"
+                        width={400}
+                        height={400}
                       />
                     </div>
 
