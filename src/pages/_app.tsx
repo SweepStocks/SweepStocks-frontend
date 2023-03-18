@@ -2,6 +2,7 @@ import '../styles/globals.css'
 import type { AppProps } from 'next/app'
 import Head from 'next/head'
 import Header from 'src/components/Header'
+import Landing from 'src/components/Landing'
 import MainSection from 'src/components/MainSection'
 
 export default function App({ Component, pageProps }: AppProps) {
@@ -13,8 +14,9 @@ export default function App({ Component, pageProps }: AppProps) {
       </Head>
       <div className="w-full text-white overflow-hidden">
         <Header />
+        <Landing />
       </div>
-      <Component {...pageProps} />
+      {/* <Component {...pageProps} /> */}
     </>
   )
 }
