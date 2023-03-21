@@ -90,83 +90,60 @@ const Landing  = () => {
 
     return(
         <>
-    <div style={{ display: 'flex',  flexDirection: 'column' }}>
-      <div style={{ flexGrow: 1, border: '1px solid white', padding: '20px' }}>
-         <h1 style={{fontSize: '3rem'}}>Guess who the champion will be!</h1>
-      </div>
+   <div className="flex flex-col h-full">
+  <div className="flex-grow flex items-center justify-center border border-white p-5 mb-8">
+    <h1 className="text-6xl">Guess who the champion will be!</h1>
+  </div>
 
     
     
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-         <div>Current Prize amount = $100</div>
+        <div className="flex justify-between items-center">
+         <div className='ml-64'>Current Prize amount = $100</div>
+         <div className='mr-64'>
              <button onClick={toggleLeagueMenu} 
-                     style={{
-                            backgroundColor: '#4CAF50', /* Green */
-                            border: 'none',
-                            color: 'white',
-                            padding: '15px 32px',
-                            textAlign: 'center',
-                            textDecoration: 'none',
-                            display: 'inline-block',
-                            fontSize: '16px',
-                            borderRadius: '5px',
-                            boxShadow: '2px 2px 2px rgba(0, 0, 0, 0.4)',
-                            cursor: 'pointer',
-                            transition: 'background-color 0.3s ease-out'
-                            }}>
+                      className="bg-green-500 text-white px-8 py-4 text-lg rounded shadow-md hover:bg-green-600 transition-colors duration-300 ease-out cursor-pointer">
         Choose the league you want to participate
             </button>
-    {isLeagueMenuOpen && (
-            <>
-            <div
-            ref={leagueMenuRef}
-            style={{
-                position: 'fixed',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                backgroundColor: '#fff',
-                color: '#000',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                padding: '10px',
-                zIndex: '1',
-                backdropFilter: 'blur(4px)',
-                minWidth: '100px',
-                maxWidth: '300px',
-              }}
-            >
-              <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
-                <li onClick={() => handleLeagueClick('Premier League')}>Premier League</li>
-                <li onClick={() => handleLeagueClick('Bundesliga')}>Bundesliga</li>
-                <li onClick={() => handleLeagueClick('LaLiga')}>LaLiga</li>
-                <li onClick={() => handleLeagueClick('UEFA Champions League')}>UEFA Champions League</li>
-                </ul>
             </div>
-            <div
-                style={{
-                  position: 'fixed',
-                  top: '0',
-                  left: '0',
-                  right: '0',
-                  bottom: '0',
-                  backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                  zIndex: '0',
-                }}
-              />
-            </>
-    )}
-    </div>
-    {teamNamesAndPrices.length > 0 && (
-        <div style={{ display: 'flex', flexGrow: 1}}>
-            {teamNamesAndPrices.map((team) => ( 
-                <div key={team.id} style={{padding: '10px', margin: '10px', backgroundColor: '#000000'}}>
-                    <h2>{team.name}</h2>
-                    <p>{team.price}</p>
-                </div>
-            ))}
-        
+            {isLeagueMenuOpen && (
+  <>
+   <div
+  ref={leagueMenuRef}
+  className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg- text-black border border-gray-300 rounded p-4 z-10 backdrop-blur-md min-w-min max-w-xs shadow-lg"
+>
+  <ul className="list-none m-0 p-0">
+    <li onClick={() => handleLeagueClick("Premier League")} className="py-2 px-4 cursor-pointer hover:bg-gray-100 transition-colors duration-200">
+      Premier League
+    </li>
+    <li onClick={() => handleLeagueClick("Bundesliga")} className="py-2 px-4 cursor-pointer hover:bg-gray-100 transition-colors duration-200">
+      Bundesliga
+    </li>
+    <li onClick={() => handleLeagueClick("LaLiga")} className="py-2 px-4 cursor-pointer hover:bg-gray-100 transition-colors duration-200">
+      LaLiga
+    </li>
+    <li onClick={() => handleLeagueClick("UEFA Champions League")} className="py-2 px-4 cursor-pointer hover:bg-gray-100 transition-colors duration-200">
+      UEFA Champions League
+    </li>
+  </ul>
+</div>
+    <div className="fixed top-0 left-0 right-0 bottom-0 bg-black bg-opacity-50 z-0" />
+  </>
+)}
+</div>
+{teamNamesAndPrices.length > 0 && (
+  <div className="flex flex-wrap justify-center">
+    {teamNamesAndPrices.map((team) => (
+      <div
+        key={team.id}
+        className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 p-4"
+      >
+        <div className="bg-white text-black rounded-lg shadow-md p-6 flex flex-col items-center">
+          <h2 className="text-2xl font-semibold mb-4">{team.name}</h2>
+          <p className="text-lg">{team.price}</p>
         </div>
+      </div>
+    ))}
+  </div>
     )}
 
    
