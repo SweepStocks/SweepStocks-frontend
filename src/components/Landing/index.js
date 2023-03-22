@@ -1,68 +1,27 @@
 import Image from 'next/image'
 import React, {useState, useRef, useEffect} from 'react';
+import axios from 'axios';
 
 const Landing  = () => {
 
     const [isLeagueMenuOpen, setIsLeagueMenuOpen] = useState(false);
     const [selectedLeague, setSelectedLeague] = useState(null);
     const [teamNamesAndPrices, setTeamNamesAndPrices] = useState('');
+    const [plStandings, setPlStandings] = useState([]);
+    const [bsaStandings, setBsaStandings] = useState([]);
+    const [fl1Standings, setFl1Standings] = useState([]);
+    const [bl1Standings, setBl1Standings] = useState([]);
+    const [saStandings, setSaStandings] = useState([]);
+    const [pplStandings, setPplStandings] = useState([]);
+    const [pdStandings, setPdStandings] = useState([]);
+    const [currentLeagueStandings, setCurrentLeagueStandings] = useState([]);
     const leagueMenuRef = useRef(null);
 
     const toggleLeagueMenu = () => {
       setIsLeagueMenuOpen(!isLeagueMenuOpen);
     };
 
-    console.log(selectedLeague);
-
-    useEffect(() => {
-    
-    const updateTeamNamesAndPrices = () => {
-        switch (selectedLeague) {
-          case 'Premier League':
-            setTeamNamesAndPrices([
-              { id: 1, name: 'Manchester United', price: '$10.00' },
-              { id: 2, name: 'Manchester City', price: '$12.00' },
-              { id: 3, name: 'Liverpool', price: '$8.00' },
-              { id: 4, name: 'Chelsea', price: '$9.00' },
-              { id: 5, name: 'Tottenham', price: '$6.00' },
-            ]);
-            break;
-          case 'Bundesliga':
-            setTeamNamesAndPrices([
-              { id: 1, name: 'Bayern Munich', price: '$10.00' },
-              { id: 2, name: 'Borussia Dortmund', price: '$12.00' },
-              { id: 3, name: 'RB Leipzig', price: '$8.00' },
-              { id: 4, name: 'Borussia Mönchengladbach', price: '$9.00' },
-              { id: 5, name: 'Eintracht Frankfurt', price: '$6.00' },
-            ]);
-            break;
-          case 'LaLiga':
-            setTeamNamesAndPrices([
-              { id: 1, name: 'Real Madrid', price: '$10.00' },
-              { id: 2, name: 'Barcelona', price: '$12.00' },
-              { id: 3, name: 'Atletico Madrid', price: '$8.00' },
-              { id: 4, name: 'Sevilla', price: '$9.00' },
-              { id: 5, name: 'Valencia', price: '$6.00' },
-            ]);
-            break;
-          case 'UEFA Champions League':
-            setTeamNamesAndPrices([
-              { id: 1, name: 'Bayern Munich', price: '$10.00' },
-              { id: 2, name: 'Paris Saint-Germain', price: '$12.00' },
-              { id: 3, name: 'Manchester City', price: '$8.00' },
-              { id: 4, name: 'Real Madrid', price: '$9.00' },
-              { id: 5, name: 'Liverpool', price: '$6.00' },
-            ]);
-            break;
-          default:
-            setTeamNamesAndPrices([]);
-        }
-      };
-      if (selectedLeague !== null) {
-        updateTeamNamesAndPrices();
-      }
-    }, [selectedLeague]);
-      
+    console.log(selectedLeague);     
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -79,13 +38,71 @@ const Landing  = () => {
     };
  }, [leagueMenuRef]);
 
- const handleLeagueClick = (league) => {
+ const handleLeagueClick = async (league) => {
     setSelectedLeague(league);
     setIsLeagueMenuOpen(false);
-    
- };
+  
+    const leagueMapping = {
+      'Premier League': 'pl',
+      'Bundesliga': 'bl1',
+      'Campeonato Brasileiro Série A': 'bsa',
+      'Ligue 1': 'fl1',
+      'Serie A': 'sa',
+      'Primeira Liga': 'ppl',
+      'Primera Division': 'pd',
+    };
+  
+    const fetchStandings = async (leagueCode, setter) => {
+      try {
+        const response = await axios.get(`http://localhost:3001/api/standings/${leagueCode}`);
+        setter(response.data.standings);
+        console.log(`JSON for ${league} standings: `, response.data.standings);
+  
+        const totalTypeStandings = response.data.standings.filter(
+          (standing) => standing.type === 'TOTAL'
+        );
+        setTeamNamesAndPrices(
+          totalTypeStandings.map((team) => ({
+            id: team.team.id,
+            name: team.team.name,
+            price: team.points,
+          }))
+        );
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+  
+    const leagueCode = leagueMapping[league];
+    const setterMapping = {
+      'pl': setPlStandings,
+      'bsa': setBsaStandings,
+      'fl1': setFl1Standings,
+      'bl1': setBl1Standings,
+      'sa': setSaStandings,
+      'ppl': setPplStandings,
+      'pd': setPdStandings,
+    };
+  
+    const setter = setterMapping[leagueCode];
+    await fetchStandings(leagueCode, setter);
+  };
 
- 
+  useEffect(() => {
+    const standingsMapping = {
+      'Premier League': plStandings,
+      'Bundesliga': bl1Standings,
+      'Campeonato Brasileiro Série A': bsaStandings,
+      'Ligue 1': fl1Standings,
+      'Serie A': saStandings,
+      'Primeira Liga': pplStandings,
+      'Primera Division': pdStandings,
+    };
+  
+    setCurrentLeagueStandings(standingsMapping[selectedLeague]);
+  }, [selectedLeague, plStandings, bl1Standings, bsaStandings, fl1Standings, saStandings, pplStandings, pdStandings]);
+
+  console.log('Selected League team names', currentLeagueStandings);
 
 
     return(
@@ -109,42 +126,51 @@ const Landing  = () => {
   <>
    <div
   ref={leagueMenuRef}
-  className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg- text-black border border-gray-300 rounded p-4 z-10 backdrop-blur-md min-w-min max-w-xs shadow-lg"
+  className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2  bg-white bg- text-black border border-gray-300 rounded p-4 z-10 backdrop-blur-md min-w-min max-w-xs shadow-lg"
 >
   <ul className="list-none m-0 p-0">
-    <li onClick={() => handleLeagueClick("Premier League")} className="py-2 px-4 cursor-pointer hover:bg-gray-100 transition-colors duration-200">
-      Premier League
-    </li>
-    <li onClick={() => handleLeagueClick("Bundesliga")} className="py-2 px-4 cursor-pointer hover:bg-gray-100 transition-colors duration-200">
-      Bundesliga
-    </li>
-    <li onClick={() => handleLeagueClick("LaLiga")} className="py-2 px-4 cursor-pointer hover:bg-gray-100 transition-colors duration-200">
-      LaLiga
-    </li>
-    <li onClick={() => handleLeagueClick("UEFA Champions League")} className="py-2 px-4 cursor-pointer hover:bg-gray-100 transition-colors duration-200">
-      UEFA Champions League
-    </li>
+  <li onClick={() => handleLeagueClick('Premier League')} className="py-2 px-4 cursor-pointer hover:bg-gray-100 transition-colors duration-200">
+  Premier League
+</li>
+<li onClick={() => handleLeagueClick('Bundesliga')} className="py-2 px-4 cursor-pointer hover:bg-gray-100 transition-colors duration-200">
+  Bundesliga
+</li>
+<li onClick={() => handleLeagueClick('Campeonato Brasileiro Série A')} className="py-2 px-4 cursor-pointer hover:bg-gray-100 transition-colors duration-200">
+  Campeonato Brasileiro Série A
+</li>
+<li onClick={() => handleLeagueClick('Ligue 1')} className="py-2 px-4 cursor-pointer hover:bg-gray-100 transition-colors duration-200">
+  Ligue 1
+</li>
+<li onClick={() => handleLeagueClick('Serie A')} className="py-2 px-4 cursor-pointer hover:bg-gray-100 transition-colors duration-200">
+  Serie A
+</li>
+<li onClick={() => handleLeagueClick('Primeira Liga')} className="py-2 px-4 cursor-pointer hover:bg-gray-100 transition-colors duration-200">
+  Primeira Liga
+</li>
+<li onClick={() => handleLeagueClick('Primera Division')} className="py-2 px-4 cursor-pointer hover:bg-gray-100 transition-colors duration-200">
+  Primera Division
+</li>
   </ul>
 </div>
     <div className="fixed top-0 left-0 right-0 bottom-0 bg-black bg-opacity-50 z-0" />
   </>
 )}
 </div>
-{teamNamesAndPrices.length > 0 && (
+{currentLeagueStandings && currentLeagueStandings.length > 0 && (
   <div className="flex flex-wrap justify-center">
-    {teamNamesAndPrices.map((team) => (
+    {currentLeagueStandings.map((standing) => (
       <div
-        key={team.id}
+        key={standing.team.id}
         className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 p-4"
       >
         <div className="bg-white text-black rounded-lg shadow-md p-6 flex flex-col items-center">
-          <h2 className="text-2xl font-semibold mb-4">{team.name}</h2>
-          <p className="text-lg">{team.price}</p>
+          <h2 className="text-2xl font-semibold mb-4">{standing.team.name}</h2>
+          <p className="text-lg">{standing.points}</p>
         </div>
       </div>
     ))}
   </div>
-    )}
+)}
 
    
   </div>
